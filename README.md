@@ -1,6 +1,6 @@
 //****************************************************************************  
 //	**[Project]** FlexSEA: Flexible & Scalable Electronics Architecture  
-//	**[Sub-project]** 'Strain' Strain Gauge Amplifier
+//	**[Sub-project]** 'Strain' Strain Gauge Amplifier  
 //	*Copyright (C) 2016 Dephy, Inc. <http://dephy.com/>*  
 //	Licensed under the GNU General Public License v3.0 (GPL-3.0)  
 //****************************************************************************  
