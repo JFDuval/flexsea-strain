@@ -41,7 +41,7 @@
 //****************************************************************************
 
 volatile uint16 adc_delsig_dma_array[STRAIN_BUF_LEN];
-struct strain_s strain[STRAIN_CHANNELS];
+struct strain_s strain1;
 
 //****************************************************************************
 // Private Function Prototype(s)
@@ -78,14 +78,14 @@ void init_strain(void)
 	//=-=-=-=-=-=
 	for(i = 0; i < STRAIN_CHANNELS; i++)
 	{
-		strain[i].offset = STRAIN_DEFAULT_OFFSET;
+		strain1.ch[i].offset = STRAIN_DEFAULT_OFFSET;
 
 		for(j = 0; j < STRAIN_BUF_LEN; j++)
 		{
-			strain[i].strain_raw[j] = 0;
+			strain1.ch[i].strain_raw[j] = 0;
 		}
-		strain[i].strain_filtered = 0;
-		strain_config(i, strain[i].offset);
+		strain1.ch[i].strain_filtered = 0;
+		strain_config(i, strain1.ch[i].offset);
 	}
 	
 	ADC_DelSig_1_StartConvert();
@@ -141,7 +141,7 @@ uint16 strain_read(uint8 ch)
 {
 	//ADC is auto-sampling, this function simply returns the last filtered value
 	
-	return strain[ch].strain_filtered;
+	return strain1.ch[ch].strain_filtered;
 }
 
 //Moving average filter:
@@ -162,14 +162,14 @@ void strain_filter(void)
 		//Shift buffer and sum all but last term
 		for(cnt = 0; cnt < STRAIN_BUF_LEN; cnt++)
 		{
-			sum += strain[i].strain_raw[cnt];
+			sum += strain1.ch[i].strain_raw[cnt];
 		}
 			
 		//Average
 		avg = (uint16)(sum >> STRAIN_SHIFT);
 		
 		//Store in structure:
-		strain[i].strain_filtered = avg;
+		strain1.ch[i].strain_filtered = avg;
 		//strain_filtered = avg;
 	}
 }
@@ -177,23 +177,23 @@ void strain_filter(void)
 //Copy latest filtered values to the EZI2C structure
 void strain_to_ezi2c(void)
 {
-	ezI2Cbuf[MEM_R_CH1_H] = (uint8)((strain[0].strain_filtered >> 8) & 0xFF);
-	ezI2Cbuf[MEM_R_CH1_L] = (uint8)((strain[0].strain_filtered) & 0xFF);
+	ezI2Cbuf[MEM_R_CH1_H] = (uint8)((strain1.ch[0].strain_filtered >> 8) & 0xFF);
+	ezI2Cbuf[MEM_R_CH1_L] = (uint8)((strain1.ch[0].strain_filtered) & 0xFF);
 	
-	ezI2Cbuf[MEM_R_CH2_H] = (uint8)((strain[1].strain_filtered >> 8) & 0xFF);
-	ezI2Cbuf[MEM_R_CH2_L] = (uint8)((strain[1].strain_filtered) & 0xFF);
+	ezI2Cbuf[MEM_R_CH2_H] = (uint8)((strain1.ch[1].strain_filtered >> 8) & 0xFF);
+	ezI2Cbuf[MEM_R_CH2_L] = (uint8)((strain1.ch[1].strain_filtered) & 0xFF);
 	
-	ezI2Cbuf[MEM_R_CH3_H] = (uint8)((strain[2].strain_filtered >> 8) & 0xFF);
-	ezI2Cbuf[MEM_R_CH3_L] = (uint8)((strain[2].strain_filtered) & 0xFF);
+	ezI2Cbuf[MEM_R_CH3_H] = (uint8)((strain1.ch[2].strain_filtered >> 8) & 0xFF);
+	ezI2Cbuf[MEM_R_CH3_L] = (uint8)((strain1.ch[2].strain_filtered) & 0xFF);
 	
-	ezI2Cbuf[MEM_R_CH4_H] = (uint8)((strain[3].strain_filtered >> 8) & 0xFF);
-	ezI2Cbuf[MEM_R_CH4_L] = (uint8)((strain[3].strain_filtered) & 0xFF);
+	ezI2Cbuf[MEM_R_CH4_H] = (uint8)((strain1.ch[3].strain_filtered >> 8) & 0xFF);
+	ezI2Cbuf[MEM_R_CH4_L] = (uint8)((strain1.ch[3].strain_filtered) & 0xFF);
 	
-	ezI2Cbuf[MEM_R_CH5_H] = (uint8)((strain[4].strain_filtered >> 8) & 0xFF);
-	ezI2Cbuf[MEM_R_CH5_L] = (uint8)((strain[4].strain_filtered) & 0xFF);
+	ezI2Cbuf[MEM_R_CH5_H] = (uint8)((strain1.ch[4].strain_filtered >> 8) & 0xFF);
+	ezI2Cbuf[MEM_R_CH5_L] = (uint8)((strain1.ch[4].strain_filtered) & 0xFF);
 	
-	ezI2Cbuf[MEM_R_CH6_H] = (uint8)((strain[5].strain_filtered >> 8) & 0xFF);
-	ezI2Cbuf[MEM_R_CH6_L] = (uint8)((strain[5].strain_filtered) & 0xFF);
+	ezI2Cbuf[MEM_R_CH6_H] = (uint8)((strain1.ch[5].strain_filtered >> 8) & 0xFF);
+	ezI2Cbuf[MEM_R_CH6_L] = (uint8)((strain1.ch[5].strain_filtered) & 0xFF);
 }
 
 /*

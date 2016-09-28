@@ -87,7 +87,7 @@ void isr_delsig_Interrupt_InterruptCallback()
 	//Copy the last DMA buffer to our 2D array:
 	for(i = 0; i < STRAIN_BUF_LEN; i++)
 	{
-		strain[ch].strain_raw[i] = adc_delsig_dma_array[i];
+		strain1.ch[ch].strain_raw[i] = adc_delsig_dma_array[i];
 	}
 
 	//Next channel:
