@@ -41,7 +41,6 @@
 //****************************************************************************
 
 volatile uint16 adc_delsig_dma_array[STRAIN_BUF_LEN];
-struct strain_s strain1;
 
 //****************************************************************************
 // Private Function Prototype(s)

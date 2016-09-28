@@ -97,7 +97,6 @@ void strain_to_ezi2c(void);
 // Shared variable(s)
 //****************************************************************************	
 
-extern struct strain_s strain1;
 extern uint16_t adc_strain_filtered;	
 extern volatile uint16_t adc_strain;
 extern volatile uint16 adc_delsig_dma_array[STRAIN_BUF_LEN];
