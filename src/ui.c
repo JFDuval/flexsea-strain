@@ -93,6 +93,7 @@ void rgb_led_ui(uint8_t err_l0, uint8_t err_l1, uint8_t err_l2, uint8_t new_comm
 	static uint32_t cnt_comm = UI_COMM_TIMEOUT, cnt_err_l0 = 0, cnt_err_l1 = 0, cnt_flash = 0;
 	static uint8_t latch_err_l2 = 0, flash_red = 0, comm_blue = 0;
 	uint8_t r = 0, g = 0, b = 0;
+	int8 rgbStatus = 0;
 
 	//Set variable for the flashing red light:
 	if(cnt_flash < UI_RED_FLASH_ON)
@@ -131,6 +132,8 @@ void rgb_led_ui(uint8_t err_l0, uint8_t err_l1, uint8_t err_l2, uint8_t new_comm
 
 	//From the highest priority to the lowest:
 	//=======================================
+	
+	rgbStatus = -1;
 
 	if((err_l2 == 1) || (latch_err_l2 == 1))
 	{
@@ -167,6 +170,7 @@ void rgb_led_ui(uint8_t err_l0, uint8_t err_l1, uint8_t err_l2, uint8_t new_comm
 					r = 0;
 					g = 0;
 					b = 1;
+					rgbStatus = 0;
 				}
 				else
 				{
@@ -174,13 +178,29 @@ void rgb_led_ui(uint8_t err_l0, uint8_t err_l1, uint8_t err_l2, uint8_t new_comm
 					r = 0;
 					g = 1;
 					b = 0;
+					rgbStatus = 1;
 				}
 			}
 		}
 	}
 
 	//Assign the color to the RGB LED:
-	set_led_rgb(r, g, b);
+	
+	//Use the Fading code. 
+	//TODO this isn't the cleanest integration...
+	if(rgbStatus == 0)
+	{		
+		rgbLedSet(0,0,rgbLedGetFade());
+	}
+	else if(rgbStatus == 1)
+	{
+		rgbLedSet(0,rgbLedGetFade(),0);
+	}
+	else
+	{
+		//Legacy code, used for all the errors
+		rgbLedSet(255*r, 255*b, 255*g);
+	}
 }
 
 //****************************************************************************

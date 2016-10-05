@@ -47,29 +47,14 @@ void isr_t1_Interrupt_InterruptCallback()
 {
 	//Timer 1: 100us
 	
-	static uint16 cnt = 0;
-	
 	//Clear interrupt
 	Timer_1_ReadStatusRegister();
 	isr_t1_ClearPending();
-	
-	//RGB LED pulses Green
-	if(cnt < LED_PULSE_LEN)
-		LED_G_Write(0);
-	else
-		LED_G_Write(1);
-
-	cnt++;
-	if(cnt >= led_period)
-		cnt = 0;	
 	
 	//All the timings are based on 100us slots
 	//10 slots form the original 1ms timebase
 	//'t1_time_share' is from 0 to 9, it controls the main FSM
 	
-	//Increment value, limits to 0-9
-	t1_time_share++;
-	t1_time_share %= 10;
 	t1_new_value = 1;
 	
 	//Flag for the main code

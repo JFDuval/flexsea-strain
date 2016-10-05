@@ -19,57 +19,48 @@
 	[Lead developper] Jean-Francois (JF) Duval, jfduval at dephy dot com.
 	[Origin] Based on Jean-Francois Duval's work at the MIT Media Lab 
 	Biomechatronics research group <http://biomech.media.mit.edu/>
-	[Contributors] 
+	[Contributors]
 *****************************************************************************
-	[This file] main: FlexSEA-Strain (6-channel amplifier)
-*****************************************************************************
-	[Change log] (Convention: YYYY-MM-DD | author | comment)
-	* 2016-09-26 | jfduval | Initial GPL-3.0 release
-	*
+	[This file] main_fsm: Contains all the case() code for the main FSM
 ****************************************************************************/
 
-#ifndef MAIN_H_
-#define MAIN_H_
+#ifndef INC_MAIN_FSM_H
+#define INC_MAIN_FSM_H
 
 //****************************************************************************
 // Include(s)
 //****************************************************************************
 
-#include <project.h>
-#include <math.h>
-#include "stdio.h"
-#include "main_fsm.h"
-#include "misc.h"
-#include "ui.h"
-#include "rgb_led.h"
-#include "usb.h"
-#include "strain.h"
-#include "peripherals.h"
-#include "flexsea_board.h"
-#include "../../flexsea-system/inc/flexsea_system.h"	
-#include "../../flexsea-comm/inc/flexsea.h"	
+#include "main.h"
 
 //****************************************************************************
 // Shared variable(s)
 //****************************************************************************
-	
-extern int steps;
 
 //****************************************************************************
-// Prototype(s):
+// Public Function Prototype(s):
 //****************************************************************************
 
-int main(void);
+void main_fsm_case_0(void);
+void main_fsm_case_1(void);
+void main_fsm_case_2(void);
+void main_fsm_case_3(void);
+void main_fsm_case_4(void);
+void main_fsm_case_5(void);
+void main_fsm_case_6(void);
+void main_fsm_case_7(void);
+void main_fsm_case_8(void);
+void main_fsm_case_9(void);
+
+void main_fsm_10kHz(void);
+void main_fsm_asynchronous(void);
 
 //****************************************************************************
 // Definition(s):
 //****************************************************************************
-	
-//Enable/Disable sub-modules:
-#define USE_USB
-#define USE_COMM			//Requires USE_RS485 and/or USE_USB
-#define USE_I2C_0			//3V3/5V, External
-#define USE_I2C_1			//5V, Strain gauge pots.
-#define USE_STRAIN			//Requires USE_I2C_1
 
-#endif // MAIN_H_
+//****************************************************************************
+// Structure(s)
+//****************************************************************************
+
+#endif	//INC_MAIN_FSM_H

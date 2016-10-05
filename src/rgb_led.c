@@ -16,60 +16,136 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************
-	[Lead developper] Jean-Francois (JF) Duval, jfduval at dephy dot com.
+	[Lead developper] Jean-Francois Duval, jfduval at dephy dot com.
 	[Origin] Based on Jean-Francois Duval's work at the MIT Media Lab 
 	Biomechatronics research group <http://biomech.media.mit.edu/>
-	[Contributors] 
+	[Contributors]
 *****************************************************************************
-	[This file] main: FlexSEA-Strain (6-channel amplifier)
+	[This file] RGB LED: Onboard LED Driver that supports fading
 *****************************************************************************
 	[Change log] (Convention: YYYY-MM-DD | author | comment)
-	* 2016-09-26 | jfduval | Initial GPL-3.0 release
+	* 2016-10-05 | jfduval | Copied Execute & Manage
 	*
 ****************************************************************************/
-
-#ifndef MAIN_H_
-#define MAIN_H_
 
 //****************************************************************************
 // Include(s)
 //****************************************************************************
 
-#include <project.h>
-#include <math.h>
-#include "stdio.h"
-#include "main_fsm.h"
-#include "misc.h"
-#include "ui.h"
+#include "main.h"
 #include "rgb_led.h"
-#include "usb.h"
-#include "strain.h"
-#include "peripherals.h"
-#include "flexsea_board.h"
-#include "../../flexsea-system/inc/flexsea_system.h"	
-#include "../../flexsea-comm/inc/flexsea.h"	
 
 //****************************************************************************
-// Shared variable(s)
+// Variable(s)
 //****************************************************************************
+
+uint8 rgbFade = 0;
+
+//RGB LED:
+uint8 rgbPeriodR = 0, rgbPeriodG = 0, rgbPeriodB = 0;
+
+//****************************************************************************
+// Private Function Prototype(s):
+//****************************************************************************
+
+
+//****************************************************************************
+// Public Function(s)
+//****************************************************************************
+
+//Use this to set a new value
+void rgbLedSet(uint8 r, uint8 g, uint8 b)
+{
+	rgbPeriodR = r;
+	rgbPeriodG = g;
+	rgbPeriodB = b;
+}
+
+//Timer-based RGB driver - w/ fading.
+//Call this function at 10kHz
+void rgbLedRefresh(void)
+{
+	static uint8 cnt = 0;
+	static uint8 rON = 0, gON = 0, bON = 0;
 	
-extern int steps;
-
-//****************************************************************************
-// Prototype(s):
-//****************************************************************************
-
-int main(void);
-
-//****************************************************************************
-// Definition(s):
-//****************************************************************************
+	//New cycle?
+	if(!cnt)
+	{
+		//All ON
+		LED_R_Write(0);
+		LED_G_Write(0);
+		LED_B_Write(0);
+		rON = 1;
+		gON = 1;
+		bON = 1;
+	}
 	
-//Enable/Disable sub-modules:
-#define USE_USB
-#define USE_COMM			//Requires USE_RS485 and/or USE_USB
-#define USE_I2C_0			//3V3/5V, External
-#define USE_I2C_1			//5V, Strain gauge pots.
-#define USE_STRAIN			//Requires USE_I2C_1
+	//Ready to turn OFF?
+	
+	if(rON && cnt >= rgbPeriodR)
+	{
+		LED_R_Write(1);
+		rON = 0;
+	}
+	
+	if(gON && cnt >= rgbPeriodG)
+	{
+		LED_G_Write(1);
+		gON = 0;
+	}
+	
+	if(bON && cnt >= rgbPeriodB)
+	{
+		LED_B_Write(1);
+		bON = 0;
+	}
+	
+	//Increment counter. It will eventually roll over.
+	cnt += 2;
+}
 
-#endif // MAIN_H_
+//Accessor
+uint8 rgbLedGetFade(void)
+{
+	return rgbFade;
+}
+
+//Call this function every ms. It will update the rgbFade variable.
+void rgbLedRefreshFade(void)
+{
+	static uint16 fade = 0, val = 0;
+
+	val++;
+	val %= FADE_PERIOD_MS;
+	
+	if(val > FADE_MIDPOINT-2)
+		fade = FADE_PERIOD_MS - val;
+	else
+		fade = val;
+	
+	rgbFade = (uint8) (fade>>1 & 0xFF);
+}
+
+//Test code
+void rgbLedRefresh_testcode_blocking(void)
+{
+	uint8 div = 0;
+	
+	while(1)
+	{		
+		rgbLedSet(0, rgbFade, 0);
+		CyDelayUs(100);
+		
+		div++;
+		div %= 10;
+		if(!div)
+		{
+			//1ms
+			rgbLedRefreshFade();
+		}
+	}
+}
+
+//****************************************************************************
+// Private Function(s)
+//****************************************************************************

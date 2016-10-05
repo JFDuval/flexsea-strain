@@ -95,168 +95,59 @@ int main(void)
 		{
 			//If the time share slot changed we run the timing FSM. Refer to
 			//timing.xlsx for more details. 't1_new_value' updates at 10kHz,
-			//each slot at 1kHz.
-			
-			t1_new_value = 0;
+			//each slot at 1kHz.			
+            
+            t1_new_value = 0;            
 			
 			//Timing FSM:
 			switch(t1_time_share)
 			{
-				//Case 0: I2C_0
-				case 0:
-					i2c_time_share++;
-					i2c_time_share %= 4;
-				
-					#ifdef USE_I2C_0
-				
-					//Subdivided in 4 slots.
-					switch(i2c_time_share)
-					{
-						//Case 0.0: 
-						case 0:
-						
-							break;
-						
-						//Case 0.1: 
-						case 1:
-						
-							break;
-						
-						//Case 0.2:
-						case 2:
-							//...
-							break;
-						
-						//Case 0.3: 
-						case 3:
-							
-							break;
-						
-						default:
-							break;
-					}
-					
-					#endif //USE_I2C_INT
-												
-					break;
-				
-				//Case 1: I2C_1
-				case 1:
-										
-					break;
-				
-				//Case 2:	
+				case 0:                    
+					main_fsm_case_0();	
+					break;				
+				case 1:       
+					main_fsm_case_1();	
+					break;				
 				case 2:
+					main_fsm_case_2();
 					break;
-				
-				//Case 3: 
-				case 3:		
-					
-					//ToDo do this when new data, not randomly
-					strain_filter();
-					strain_to_ezi2c();
-					
-					break;
-				
-				//Case 4: User Interface	
+				case 3:				
+					main_fsm_case_3();					
+					break;					
 				case 4:
-					
-					//Alive LED
-					//alive_led();	//Done in ISR
-					
-					//UI RGB LED:
-					// ToDo...
-					
-					break;
-				
-				//Case 5:
+					main_fsm_case_4();			
+					break;				
 				case 5:
-							
-					break;
-				
-				//Case 6: 
+					main_fsm_case_5();			
+					break;					
 				case 6:
-										
-					break;
-				
-				case 7:
-					
-					break;
-				
-				//Case 8:
+					main_fsm_case_6();						
+					break;				
+				case 7:					
+					main_fsm_case_7();	
+					break;				
 				case 8:
-					
+					main_fsm_case_8();					
 					break;
-				
-				//Case 9: 	
 				case 9:
-								
-					//1s timebase:
-					if(timebase_1s())
-					{
-						//Insert code that needs to run every second here
-						//...
-					}
-					
-					break;
-				
+					main_fsm_case_9();	
+					break;				
 				default:
 					break;
 			}
 			
+			//Increment value, limits to 0-9
+        	t1_time_share++;
+	        t1_time_share %= 10;
+			
 			//The code below is executed every 100us, after the previous slot. 
-			//Keep it short!
-			
-			//BEGIN - 10kHz Refresh
-				
-			//USB Byte Input
-			#ifdef USE_USB			
-		
-			get_usb_data();
-			
-			if(data_ready_usb)
-			{
-				data_ready_usb = 0;
-				//Got new data in, try to decode
-				cmd_ready_usb = unpack_payload_usb();
-			}
-
-			#endif	//USE_USB
-			
-			//FlexSEA Network Communication
-			#ifdef USE_COMM
-			
-			//Valid communication from USB?
-			if(cmd_ready_usb != 0)
-			{
-				cmd_ready_usb = 0;
-				
-				//Cheap trick to get first line	//ToDo: support more than 1
-				for(i = 0; i < PAYLOAD_BUF_LEN; i++)
-				{
-					tmp_rx_command_usb[i] = rx_command_usb[0][i];
-				}
-				
-				//payload_parse_str() calls the functions (if valid)
-				result = payload_parse_str(tmp_rx_command_usb);
-				
-				//LED:
-				if(result == PARSE_SUCCESSFUL)
-				{
-					//Green LED only if the ID matched and the command was known
-					new_cmd_led = 1;
-				}
-			}
-
-			
-			#endif	//USE_COMM	
-			
-			//END - 10kHz Refresh
+			//Keep it short! (<10us if possible)
+			main_fsm_10kHz();         
 		}
 		else
 		{
 			//Asynchronous code goes here.
-			//...
+			main_fsm_asynchronous();			
 		}
 	}
 }
