@@ -115,7 +115,7 @@ int main(void)
 					main_fsm_case_3();					
 					break;					
 				case 4:
-					main_fsm_case_4();			
+					main_fsm_case_4();
 					break;				
 				case 5:
 					main_fsm_case_5();			

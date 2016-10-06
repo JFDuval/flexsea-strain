@@ -173,6 +173,66 @@ void strain_filter(void)
 	}
 }
 
+//Compress 6x uint16 to 9 bytes (12bits per sensor).
+//Needed to send all data with RIC/NU Read All function
+uint8_t compressAndSplit6ch(uint8_t *buf, uint16_t ch0, uint16_t ch1, uint16_t ch2, \
+                            uint16_t ch3, uint16_t ch4, uint16_t ch5)
+{
+    uint8_t tmp0 = 0, tmp1 = 0;
+    uint16_t tmp[6] = {0,0,0,0,0,0};
+    uint16_t combo[5] = {0,0,0,0,0};
+
+    //Compress to 12bits
+    tmp[0] = (ch0 >> 4) & 0x0FFF;
+    tmp[1] = (ch1 >> 4) & 0x0FFF;
+    tmp[2] = (ch2 >> 4) & 0x0FFF;
+    tmp[3] = (ch3 >> 4) & 0x0FFF;
+    tmp[4] = (ch4 >> 4) & 0x0FFF;
+    tmp[5] = (ch5 >> 4) & 0x0FFF;
+
+    //We want:
+    //combo[0]: 0000 0000 0000 1111
+    //combo[1]: 1111 1111 2222 2222
+    //combo[2]: 2222 3333 3333 3333
+    //combo[3]: 4444 4444 4444 5555
+    //combo[4]: ____ ____ 5555 5555
+
+    //Combine:
+    combo[0] = (tmp[0] << 4) | ((tmp[1] >> 8) & 0xFF);
+    combo[1] = (tmp[1] << 8) | ((tmp[2] >> 4) & 0xFFFF);
+    combo[2] = (tmp[2] << 12) | (tmp[3]);
+    combo[3] = (tmp[4] << 4) | ((tmp[5] >> 8) & 0xFF);
+    combo[4] = (tmp[5] & 0xFF);
+
+
+    //Stock in uint8_t buffer:
+    uint16_to_bytes((uint16_t)combo[0], &tmp0, &tmp1);
+    *(buf) = tmp0;
+    *(buf+1) = tmp1;
+    uint16_to_bytes((uint16_t)combo[1], &tmp0, &tmp1);
+    *(buf+2) = tmp0;
+    *(buf+3) = tmp1;
+    uint16_to_bytes((uint16_t)combo[2], &tmp0, &tmp1);
+    *(buf+4) = tmp0;
+    *(buf+5) = tmp1;
+    uint16_to_bytes((uint16_t)combo[3], &tmp0, &tmp1);
+    *(buf+6) = tmp0;
+    *(buf+7) = tmp1;
+    *(buf+8) = (uint8_t)combo[4];
+
+    return 0;
+}
+
+void compressedStrainToEzi2c(void)
+{
+	int i = 0;
+	
+	for(i = MEM_R_CH1_H; i < MEM_R_CH1_H+9; i++)
+	{
+		ezI2Cbuf[i] = strain1.compressedBytes[i-MEM_R_CH1_H];
+	}
+}
+
 //Copy latest filtered values to the EZI2C structure
 void strain_to_ezi2c(void)
 {

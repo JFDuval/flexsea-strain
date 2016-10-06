@@ -116,7 +116,12 @@ void main_fsm_case_3(void)
 {
 	//ToDo do this when new data, not randomly
 	strain_filter();
-	strain_to_ezi2c();
+	compressAndSplit6ch(strain1.compressedBytes, strain1.ch[0].strain_filtered, 
+						strain1.ch[1].strain_filtered, strain1.ch[2].strain_filtered,
+						strain1.ch[3].strain_filtered, strain1.ch[4].strain_filtered,
+						strain1.ch[5].strain_filtered);
+	//strain_to_ezi2c();
+	compressedStrainToEzi2c();
 }
 
 //Case 4: User Interface
