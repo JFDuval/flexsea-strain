@@ -57,54 +57,36 @@ unsigned char slave_read_buffer[SLAVE_READ_BUFFER_LEN];
 // Function(s)
 //****************************************************************************
 
-//Wrapper for the specific serial functions. Useful to keep flexsea_network
+//Wrappers for the specific serial functions. Useful to keep flexsea_network
 //platform independent (for example, we don't need need puts_rs485() for Plan)
-void flexsea_send_serial_slave(unsigned char port, unsigned char *str, unsigned char length)
+
+//Communication with a slave
+void flexsea_send_serial_slave(uint8_t port, uint8_t *str, uint8_t length)
 {
-	//...
+	//Execute doesn't have slaves:
+	(void)port;
+	(void)str;
+	(void)length;
 }
 
-void flexsea_send_serial_master(unsigned char port, unsigned char *str, unsigned char length)
+//Communication with our master
+void flexsea_send_serial_master(uint8_t port, uint8_t *str, uint8_t length)
 {
-	//...
-}
-
-//Fill the buffer with 0s
-void flexsea_clear_slave_read_buffer(void)
-{
-	int i;
-
-	for(i = 0; i < SLAVE_READ_BUFFER_LEN; i++)
+	if(port == PORT_485_1)
 	{
-		slave_read_buffer[i] = 0;
+		//Delayed response:
+		#ifdef USE_RS485
+		rs485_reply_ready(str, length);
+		#endif 	//USE_RS485
 	}
-}
-
-//Packages data in one unified array: slave_read_buffer[]
-void flexsea_update_slave_read_buffer(unsigned char read_offset)
-{
-	//ToDo
-	//...
-}
-
-//ToDo delete function?
-void build_slave_payload(unsigned char base_addr)
-{
-	unsigned char i = 0;
-
-    //Fresh string:
-    prepare_empty_payload(board_id, board_up_id, payload_str, PAYLOAD_BUF_LEN);
-
-    //Command:
-    payload_str[P_CMDS] = 1;                     //1 command in string
-    payload_str[P_CMD1] = 0;//CMD_MEM_READ_REPLY;
-
-    //Copy a portion of slave_read_buffer[] in payload_str[]
-	payload_str[P_DATA1] = slave_read_buffer[SRB_EXECUTE_OFFSET];	//Always the offset		//ToDO fix&enable if you keep this function!
-    for(i = 1; i < PAYLOAD_BYTES; i++)
-    {
-    	payload_str[P_DATA1 + i] = slave_read_buffer[base_addr + i];
-    }
-
-    return;
+	else if(port == PORT_USB)
+	{
+		#ifdef USE_USB
+		usb_puts(str, length);
+		#endif
+	}
+	else
+	{
+		//Deal with errors here ToDo
+	}
 }

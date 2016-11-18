@@ -46,8 +46,8 @@
 #include "strain.h"
 #include "peripherals.h"
 #include "flexsea_board.h"
-#include "../../flexsea-system/inc/flexsea_system.h"	
-#include "../../flexsea-comm/inc/flexsea.h"	
+#include "../flexsea-system/inc/flexsea_system.h"
+#include "../flexsea-comm/inc/flexsea.h"
 
 //****************************************************************************
 // Shared variable(s)

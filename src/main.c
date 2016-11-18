@@ -74,9 +74,6 @@ int main(void)
 	//Initialize all the peripherals
 	init_peripherals();
 	
-	//Start with an empty buffer
-	flexsea_clear_slave_read_buffer();
-	
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 	//Blocking Test code - enable one and only one for special 
 	//debugging. Normal code WILL NOT EXECUTE when this is enabled!

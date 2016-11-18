@@ -177,6 +177,8 @@ void main_fsm_case_9(void)
 
 void main_fsm_10kHz(void)
 {    
+	uint8_t info[2] = {0,0};
+	
 	//USB Byte Input
 	#ifdef USE_USB
 
@@ -208,7 +210,7 @@ void main_fsm_10kHz(void)
 		}
 		
 		//payload_parse_str() calls the functions (if valid)
-		result = payload_parse_str(tmp_rx_command_usb);
+		result = payload_parse_str(tmp_rx_command_usb, info);
 		
 		//LED:
 		if(result == PARSE_SUCCESSFUL)
