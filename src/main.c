@@ -41,6 +41,7 @@
 #include "peripherals.h"
 #include "misc.h"
 #include "ui.h"
+#include "main_fsm.h"
 
 #if defined (__GNUC__)
     /* Add an explicit reference to the floating point printf library */

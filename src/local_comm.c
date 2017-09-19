@@ -1,6 +1,6 @@
 /****************************************************************************
 	[Project] FlexSEA: Flexible & Scalable Electronics Architecture
-	[Sub-project] 'flexsea-strain' 6-ch Strain Gauge Amplifier
+	[Sub-project] 'flexsea-execute' Advanced Motion Controller
 	Copyright (C) 2016 Dephy, Inc. <http://dephy.com/>
 
 	This program is free software: you can redistribute it and/or modify
@@ -16,15 +16,15 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************
-	[Lead developper] Jean-Francois Duval, jfduval at dephy dot com.
+	[Lead developper] Jean-Francois (JF) Duval, jfduval at dephy dot com.
 	[Origin] Based on Jean-Francois Duval's work at the MIT Media Lab 
 	Biomechatronics research group <http://biomech.media.mit.edu/>
 	[Contributors]
 *****************************************************************************
-	[This file] RGB LED: Onboard LED Driver that supports fading
+	[This file] local_comm: Communication functions, board specific
 *****************************************************************************
 	[Change log] (Convention: YYYY-MM-DD | author | comment)
-	* 2016-10-05 | jfduval | Copied Execute & Manage
+	* 2017-03-06 | jfduval | Released under GPL-3.0 release
 	*
 ****************************************************************************/
 
@@ -33,142 +33,49 @@
 //****************************************************************************
 
 #include "main.h"
-#include "rgb_led.h"
+#include "local_comm.h"
+#include "misc.h"
+#include <flexsea_payload.h>
+#include <flexsea_board.h>
 
 //****************************************************************************
 // Variable(s)
 //****************************************************************************
 
-uint8 rgbFade = 0;
-
-//RGB LED:
-uint8 rgbPeriodR = 0, rgbPeriodG = 0, rgbPeriodB = 0;
-
 //****************************************************************************
 // Private Function Prototype(s):
-//****************************************************************************
-
+//****************************************************************************	
 
 //****************************************************************************
 // Public Function(s)
 //****************************************************************************
 
-//Use this to set a new value
-void rgbLedSet(uint8 r, uint8 g, uint8 b)
+//Prepares the structures:
+void initLocalComm(void)
 {
-	#ifndef LED_ASSEMBLED_BACKWARD
-	rgbPeriodR = r;
-	rgbPeriodG = g;
-	rgbPeriodB = b;
-	#else
-	//Blue => Blue, Green => Pink
-	if(g > 0)
-	{
-		rgbPeriodR = g;
-		rgbPeriodG = 0;
-		rgbPeriodB = g;
-	}
-	else
-	{
-		//Swap R & B:
-		rgbPeriodR = b;
-		rgbPeriodG = 0;
-		rgbPeriodB = r;
-	}
-	#endif
+	//Default state:
+	initCommPeriph(&commPeriph[PORT_USB], PORT_USB, MASTER, rx_buf_2, \
+			comm_str_2, rx_command_2, &rx_buf_circ_2, \
+			&packet[PORT_USB][INBOUND], &packet[PORT_USB][OUTBOUND]);
+
+	//Personalize specific fields:
+	//...
 }
 
-//Timer-based RGB driver - w/ fading.
-//Call this function at 10kHz
-void rgbLedRefresh(void)
+//Did we receive new commands? Can we parse them?
+void parseMasterCommands(uint8_t *new_cmd)
 {
-	static uint8 cnt = 0;
-	static uint8 rON = 0, gON = 0, bON = 0;
+	uint8_t parseResult = 0, newCmdLed = 0;
 	
-	#ifdef LED_ASSEMBLED_BACKWARD
-		LED_G_Write(1);	//This is actually the anode
-	#endif
-	
-	//New cycle?
-	if(!cnt)
+	//USB
+	if(commPeriph[PORT_USB].rx.unpackedPacketsAvailable > 0)
 	{
-		//All ON
-		LED_R_Write(0);
-		#ifndef LED_ASSEMBLED_BACKWARD
-		LED_G_Write(0);
-		#endif
-		LED_B_Write(0);
-		rON = 1;
-		gON = 1;
-		bON = 1;
+		commPeriph[PORT_USB].rx.unpackedPacketsAvailable = 0;
+		parseResult = payload_parse_str(&packet[PORT_USB][INBOUND]);
+		newCmdLed += (parseResult == PARSE_SUCCESSFUL) ? 1 : 0;
 	}
-	
-	//Ready to turn OFF?
-	
-	if(rON && cnt >= rgbPeriodR)
-	{
-		LED_R_Write(1);
-		rON = 0;
-	}
-	
-	#ifndef LED_ASSEMBLED_BACKWARD
-	if(gON && cnt >= rgbPeriodG)
-	{
-		LED_G_Write(1);
-		gON = 0;
-	}
-	#endif
-	
-	if(bON && cnt >= rgbPeriodB)
-	{
-		LED_B_Write(1);
-		bON = 0;
-	}
-	
-	//Increment counter. It will eventually roll over.
-	cnt += 2;
-}
 
-//Accessor
-uint8 rgbLedGetFade(void)
-{
-	return rgbFade;
-}
-
-//Call this function every ms. It will update the rgbFade variable.
-void rgbLedRefreshFade(void)
-{
-	static uint16 fade = 0, val = 0;
-
-	val++;
-	val %= FADE_PERIOD_MS;
-	
-	if(val > FADE_MIDPOINT-2)
-		fade = FADE_PERIOD_MS - val;
-	else
-		fade = val;
-	
-	rgbFade = (uint8) (fade>>1 & 0xFF);
-}
-
-//Test code
-void rgbLedRefresh_testcode_blocking(void)
-{
-	uint8 div = 0;
-	
-	while(1)
-	{		
-		rgbLedSet(0, rgbFade, 0);
-		CyDelayUs(100);
-		
-		div++;
-		div %= 10;
-		if(!div)
-		{
-			//1ms
-			rgbLedRefreshFade();
-		}
-	}
+	if(newCmdLed > 0) {*new_cmd = 1;}
 }
 
 //****************************************************************************

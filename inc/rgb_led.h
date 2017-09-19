@@ -55,4 +55,13 @@ void rgbLedRefresh_testcode_blocking(void);
 #define FADE_PERIOD_MS				1000
 #define FADE_MIDPOINT				(FADE_PERIOD_MS/2)
 
+/*Some boards assembled by Stellar have reverse LEDs. If that's the case,
+  enable the following line to use the BLUE/PINK/RED color scheme. It's the
+  best we can do in that situation.*/
+#define LED_ASSEMBLED_BACKWARD
+
+#define RGB_BLUE	1,1,0
+#define RGB_PINK	0,1,0
+#define RGB_RED		0,1,1
+
 #endif	//INC_RGBLED_H

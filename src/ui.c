@@ -34,6 +34,7 @@
 
 #include "main.h"
 #include "ui.h"
+#include "rgb_led.h"
 
 //****************************************************************************
 // Variable(s)
@@ -68,6 +69,7 @@ void alive_led(void)
 //Power On Delay with LEDs
 void power_on(void)
 {
+	#ifndef LED_ASSEMBLED_BACKWARD
 	set_led_rgb(1,0,0);
 	CyDelay(250);
 	set_led_rgb(0,1,0);
@@ -76,15 +78,30 @@ void power_on(void)
 	CyDelay(250);
 	set_led_rgb(0,0,0);
 	CyDelay(250);
+	#else
+	set_led_rgb(RGB_RED);
+	CyDelay(333);
+	set_led_rgb(RGB_PINK);
+	CyDelay(333);
+	set_led_rgb(RGB_BLUE);
+	CyDelay(333);		
+	#endif
 }
 
 void set_led_rgb(unsigned char r, unsigned char g, unsigned char b)
 {
 	//No fading, we use 1 or 0 for now. Flipping the sign so x = 1 means ON
 
+	#ifndef LED_ASSEMBLED_BACKWARD
 	LED_R_Write((r & 0x01)^1);
 	LED_G_Write((g & 0x01)^1);
 	LED_B_Write((b & 0x01)^1);
+	#else
+	(void)g;
+	LED_R_Write((r & 0x01)^1);
+	LED_G_Write(1);	//This is the anode
+	LED_B_Write((b & 0x01)^1);
+	#endif
 }
 
 //Call this function every ms in main while()

@@ -50,7 +50,7 @@ void get_usb_data(void);
 void usb_puts(uint8 *buf, uint32 len);
 void usbRuntimeConnect(void);
 
-uint8 usb_echo_blocking(void);
+//uint8 usb_echo_blocking(void);
 
 int16 send_usb_packet(uint16 word1, uint16 word2, uint16 word3, uint16 word4);
 

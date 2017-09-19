@@ -196,6 +196,7 @@ void usb_puts(uint8 *buf, uint32 len)
 // Test Function(s) - Use with care!
 //****************************************************************************
 
+/*
 //Returns chars to PC. ToDo: make it non-blocking!
 uint8 usb_echo_blocking(void)
 {
@@ -224,6 +225,7 @@ uint8 usb_echo_blocking(void)
 	
 	return 0;	//No byte
 }
+*/
 
 //****************************************************************************
 // Deprecated Function(s)

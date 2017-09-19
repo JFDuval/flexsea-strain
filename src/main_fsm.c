@@ -38,6 +38,9 @@
 #include "local_comm.h"
 #include "usb.h"
 #include "strain.h"
+#include "ui.h"
+#include "misc.h"
+#include "rgb_led.h"
 
 //****************************************************************************
 // Variable(s)

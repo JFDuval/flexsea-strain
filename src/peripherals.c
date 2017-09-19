@@ -39,6 +39,7 @@
 #include "peripherals.h"
 #include "usb.h"
 #include "ui.h"
+#include "strain.h"
 
 //****************************************************************************
 // Variable(s)
