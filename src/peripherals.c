@@ -37,6 +37,8 @@
 
 #include "main.h"
 #include "peripherals.h"
+#include "usb.h"
+#include "ui.h"
 
 //****************************************************************************
 // Variable(s)

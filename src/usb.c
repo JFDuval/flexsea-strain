@@ -34,12 +34,15 @@
 
 #include "main.h"
 #include "usb.h"
+#include "flexsea_board.h"
+#include <flexsea_comm.h>
 
 //****************************************************************************
 // Variable(s)
 //****************************************************************************
 
 uint8 buffer[RX_BUF_LEN];
+uint8_t usbConnected = 0;
 
 //****************************************************************************
 // Function(s)
@@ -51,11 +54,10 @@ uint8 init_usb(void)
 {
 	uint16 cnt = 0, flag = 0;
 	
-	//Start USBFS Operation with 3V operation
+	//Start USBFS Operation with 5V operation
     USBUART_1_Start(0u, USBUART_1_5V_OPERATION);
 	
 	//Wait for Device to enumerate */
-    //while(!USBUART_1_GetConfiguration());
 	for(cnt = 0; cnt < USB_ENUM_TIMEOUT; cnt++)
 	{
 		if(USBUART_1_GetConfiguration())
@@ -69,16 +71,32 @@ uint8 init_usb(void)
 	if(flag)	
 	{
 	    //Enumeration is done, enable OUT endpoint for receive data from Host
-	    USBUART_1_CDC_Init();	
+	    USBUART_1_CDC_Init();
+		usbConnected = 1;
 		return 1;		//Success
 	}
 	
 	return 0;	//Timeout	
 }
 
+//Call this function periodically to see if USB is ready to be connected.
+void usbRuntimeConnect(void)
+{
+	//Skip if it's already working:
+	if(usbConnected) {return;}
+	
+	if(USBUART_1_GetConfiguration())
+	{
+		//Enumeration is done, enable OUT endpoint for receive data from Host
+	    USBUART_1_CDC_Init();
+		usbConnected = 1;
+	}
+}
+
 void get_usb_data(void)
 {
 	static 	int16 count = 0;
+	volatile uint8_t mod = 0;
 	
 	//USB Data
 	if(USBUART_1_DataIsReady() != 0u)               	//Check for input data from PC
@@ -87,9 +105,14 @@ void get_usb_data(void)
 		if(count != 0u)
 		{
 			//Store all bytes in rx buf:			
-			update_rx_buf_array_usb(buffer, count+1);
-		
-			data_ready_usb++;
+			update_rx_buf_usb(buffer, count+1);
+			
+			//Raise flag(s):
+			if(count > COMM_STR_BUF_LEN)
+			{
+				mod = count / COMM_STR_BUF_LEN;
+			}
+			commPeriph[PORT_USB].rx.bytesReadyFlag += (1 + mod);
 		}
     } 	
 }

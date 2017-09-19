@@ -34,6 +34,13 @@
 
 #include "main.h"
 #include "cyapicallbacks.h"
+#include "local_comm.h"
+#include "flexsea_board.h"
+#include "flexsea_system.h"
+#include "flexsea.h"
+#include "peripherals.h"
+#include "misc.h"
+#include "ui.h"
 
 #if defined (__GNUC__)
     /* Add an explicit reference to the floating point printf library */
@@ -70,9 +77,12 @@ int main(void)
 	
 	//Prepare FlexSEA stack:
 	init_flexsea_payload_ptr();
+	initLocalComm();
 
 	//Initialize all the peripherals
 	init_peripherals();
+	
+	initializeGlobalStructs();
 	
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 	//Blocking Test code - enable one and only one for special 

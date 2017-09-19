@@ -38,16 +38,16 @@
 #include <project.h>
 #include <math.h>
 #include "stdio.h"
-#include "main_fsm.h"
-#include "misc.h"
-#include "ui.h"
-#include "rgb_led.h"
-#include "usb.h"
-#include "strain.h"
-#include "peripherals.h"
-#include "flexsea_board.h"
-#include "../flexsea-system/inc/flexsea_system.h"
-#include "../flexsea-comm/inc/flexsea.h"
+//#include "main_fsm.h"
+//#include "misc.h"
+//#include "ui.h"
+//#include "rgb_led.h"
+//#include "usb.h"
+//#include "strain.h"
+//#include "peripherals.h"
+//#include "flexsea_board.h"
+//#include "../flexsea-system/inc/flexsea_system.h"
+//#include "../flexsea-comm/inc/flexsea.h"
 
 //****************************************************************************
 // Shared variable(s)

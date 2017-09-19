@@ -36,14 +36,22 @@
 // Include(s)
 //****************************************************************************
 
-#include <stdint.h>	
+#include <stdint.h>
+#include <flexsea.h>
+#include <flexsea_comm.h>
 
 //****************************************************************************
 // Prototype(s):
 //****************************************************************************
 
-void flexsea_send_serial_slave(uint8_t port, uint8_t *str, uint8_t length);
-void flexsea_send_serial_master(uint8_t port, uint8_t *str, uint8_t length);
+void flexsea_send_serial_slave(PacketWrapper* p);
+void flexsea_send_serial_master(PacketWrapper* p);
+void flexsea_receive_from_master(void);
+uint8_t getBoardID(void);
+void setBoardID(uint8_t bid);
+uint8_t getBoardUpID(void);
+uint8_t getBoardSubID(uint8_t sub, uint8_t idx);
+uint8_t getSlaveCnt(uint8_t sub);
 
 //****************************************************************************
 // Definition(s):
@@ -52,12 +60,19 @@ void flexsea_send_serial_master(uint8_t port, uint8_t *str, uint8_t length);
 //<FlexSEA User>
 //==============
 
-//Board type - un-comment only one!
-//Make sure it matches with board_id!
-//#define BOARD_TYPE_FLEXSEA_PLAN
-//#define BOARD_TYPE_FLEXSEA_MANAGE
-//#define BOARD_TYPE_FLEXSEA_EXECUTE
-#define BOARD_TYPE_FLEXSEA_STRAIN_AMP
+//How many slave busses?
+#define COMM_SLAVE_BUS				2
+
+//How many slaves on this bus?
+#define SLAVE_BUS_1_CNT				0
+#define SLAVE_BUS_2_CNT				0
+//Note: only Manage can have a value different than 0 or 1
+
+//How many possible masters?
+#define COMM_MASTERS				3
+
+//Slave Read Buffer Size:
+#define SLAVE_READ_BUFFER_LEN		32	//ToDo TBD
 
 //How many slaves on this bus?
 #define SLAVE_BUS_1_CNT				0
@@ -84,8 +99,9 @@ void flexsea_send_serial_master(uint8_t port, uint8_t *str, uint8_t length);
 #define comm_str_usb				comm_str_2
 #define unpack_payload_usb			unpack_payload_2
 #define rx_command_usb				rx_command_2
-#define update_rx_buf_byte_usb		update_rx_buf_byte_2
-#define update_rx_buf_array_usb		update_rx_buf_array_2
+//#define update_rx_buf_byte_usb		update_rx_buf_byte_2
+//#define update_rx_buf_array_usb		update_rx_buf_array_2
+#define update_rx_buf_usb(x, y)		circ_buff_write(commPeriph[PORT_USB].rx.circularBuff, (x), (y))
 
 //===============
 //</FlexSEA User>
@@ -97,10 +113,5 @@ void flexsea_send_serial_master(uint8_t port, uint8_t *str, uint8_t length);
 //****************************************************************************
 // Shared variable(s)
 //****************************************************************************
-
-extern uint8_t board_id;
-extern uint8_t board_up_id;
-extern uint8_t board_sub1_id[SLAVE_BUS_1_CNT];
-extern uint8_t board_sub2_id[SLAVE_BUS_2_CNT];
 
 #endif	//INC_FLEXSEA_BOARD_H

@@ -34,6 +34,10 @@
 
 #include "main.h"
 #include "main_fsm.h"
+#include <flexsea_board.h>
+#include "local_comm.h"
+#include "usb.h"
+#include "strain.h"
 
 //****************************************************************************
 // Variable(s)
@@ -168,7 +172,9 @@ void main_fsm_case_9(void)
 	if(timebase_1s())
 	{
 		//Insert code that needs to run every second here
-		//...
+		
+		//Tries to connect to USB:
+		usbRuntimeConnect();
 	} 
 }
 
@@ -177,48 +183,14 @@ void main_fsm_case_9(void)
 
 void main_fsm_10kHz(void)
 {    
-	uint8_t info[2] = {0,0};
-	
-	//USB Byte Input
-	#ifdef USE_USB
-
-	get_usb_data();
-	
-	if(data_ready_usb)
-	{
-		data_ready_usb = 0;
-		//Got new data in, try to decode
-		cmd_ready_usb = unpack_payload_usb();
-		
-		//eL1 = 1;
-	}
-
-	#endif	//USE_USB
-	
 	//FlexSEA Network Communication
 	#ifdef USE_COMM
-	
-	//Valid communication from USB?
-	if(cmd_ready_usb != 0)
-	{
-		cmd_ready_usb = 0;
 		
-		//Cheap trick to get first line	//ToDo: support more than 1
-		for(i = 0; i < PAYLOAD_BUF_LEN; i++)
-		{
-			tmp_rx_command_usb[i] = rx_command_usb[0][i];
-		}
+		//Did we receive new bytes from a master?
+		flexsea_receive_from_master();
 		
-		//payload_parse_str() calls the functions (if valid)
-		result = payload_parse_str(tmp_rx_command_usb, info);
-		
-		//LED:
-		if(result == PARSE_SUCCESSFUL)
-		{
-			//Green LED only if the ID matched and the command was known
-			new_cmd_led = 1;
-		}
-	}
+		//Did we receive new commands? Can we parse them?
+		parseMasterCommands(&new_cmd_led);
 	
 	#endif	//USE_COMM
 	

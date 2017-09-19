@@ -35,6 +35,9 @@
 #include "main.h"
 #include "strain.h"
 #include "cyapicallbacks.h"
+#include "flexsea_cmd_sensors.h"
+#include "flexsea.h"
+#include "peripherals.h"
 
 //****************************************************************************
 // Variable(s)
@@ -206,6 +209,13 @@ uint8_t compressAndSplit6ch(uint8_t *buf, uint16_t ch0, uint16_t ch1, uint16_t c
 
 
     //Stock in uint8_t buffer:
+	uint16_t index = 0;
+	SPLIT_16(combo[0], buf, &index);
+	SPLIT_16(combo[1], buf, &index);
+	SPLIT_16(combo[2], buf, &index);
+	SPLIT_16(combo[3], buf, &index);
+	buf[index++] = (uint8_t)combo[4];
+	/*
     uint16_to_bytes((uint16_t)combo[0], &tmp0, &tmp1);
     *(buf) = tmp0;
     *(buf+1) = tmp1;
@@ -219,6 +229,7 @@ uint8_t compressAndSplit6ch(uint8_t *buf, uint16_t ch0, uint16_t ch1, uint16_t c
     *(buf+6) = tmp0;
     *(buf+7) = tmp1;
     *(buf+8) = (uint8_t)combo[4];
+	*/
 
     return 0;
 }
