@@ -51,6 +51,7 @@ extern volatile uint8 data_ready_usb;
 extern volatile uint8 adc_delsig_flag, adc_delsig_lastCh;
 	
 extern uint16 led_period;
+extern uint8 new_cmd_led;
 	
 //****************************************************************************
 // Public Function Prototype(s):

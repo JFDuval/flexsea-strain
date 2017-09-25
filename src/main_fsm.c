@@ -50,7 +50,6 @@ uint8 eL0 = 0, eL1 = 0, eL2 = 0;
 uint8 i = 0;
 unsigned char result = 0;
 uint8 cmd_ready_usb = 0;
-static uint8 new_cmd_led = 0;
 uint8_t tmp_rx_command_485[PAYLOAD_BUF_LEN];
 uint8_t tmp_rx_command_usb[PAYLOAD_BUF_LEN];
 uint8 i2c_time_share = 0;
@@ -121,14 +120,7 @@ void main_fsm_case_2(void)
 //Case 3: 
 void main_fsm_case_3(void)
 {
-	//ToDo do this when new data, not randomly
-	//strain_filter();
-	compressAndSplit6ch(strain1.compressedBytes, strain1.ch[0].strain_filtered, 
-						strain1.ch[1].strain_filtered, strain1.ch[2].strain_filtered,
-						strain1.ch[3].strain_filtered, strain1.ch[4].strain_filtered,
-						strain1.ch[5].strain_filtered);
-	//strain_to_ezi2c();
-	compressedStrainToEzi2c();
+
 }
 
 //Case 4: User Interface

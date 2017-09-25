@@ -64,15 +64,6 @@ uint8_t tmp_rx_command_usb[PAYLOAD_BUF_LEN];
 
 int main(void)
 {
-	//Local variables:
-	uint8 i = 0;
-	unsigned char result = 0;
-	uint8 cmd_ready_usb = 0;
-	static uint8 new_cmd_led = 0;
-	uint16 safety_delay = 0;
-	uint8 i2c_time_share = 0;
-	//uint8 toggle_led = 0;
-	
 	//Power on delay with LEDs
 	power_on();
 	

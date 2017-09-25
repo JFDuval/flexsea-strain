@@ -56,7 +56,7 @@ volatile uint8 data_ready_usb = 0;
 
 //LED:
 uint16 led_period = LED_PERIOD_NORM;
-
+uint8 new_cmd_led = 0;
 
 //****************************************************************************
 // Private Function Prototype(s):

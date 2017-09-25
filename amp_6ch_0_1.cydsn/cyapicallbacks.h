@@ -37,11 +37,15 @@
 	//Define callbacks here to enable them:
 	#define isr_t1_INTERRUPT_INTERRUPT_CALLBACK
 	#define isr_t2_INTERRUPT_INTERRUPT_CALLBACK
-	#define isr_delsig_INTERRUPT_INTERRUPT_CALLBACK
+	#define isr_delsig_INTERRUPT_INTERRUPT_CALLBACK	
+	#define EZI2C_0_ISR_ENTRY_CALLBACK
+	//#define EZI2C_0_ISR_EXIT_CALLBACK
 	
 	//And include their prototype:
 	void isr_t1_Interrupt_InterruptCallback();
 	void isr_delsig_Interrupt_InterruptCallback();
+	void EZI2C_0_ISR_EntryCallback();
+	//void EZI2C_0_ISR_ExitCallback();
 	//Place all the functions in isr_callback.c
     
 #endif /* CYAPICALLBACKS_H */   
