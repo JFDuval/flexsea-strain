@@ -214,8 +214,8 @@
         <Value>AMux_1</Value>
       </Parameter>
       <Parameter name="Isolation">
-        <Value>1</Value>
-        <Expression>MediumIsolation</Expression>
+        <Value>2</Value>
+        <Expression>MaximumIsolation</Expression>
       </Parameter>
       <Parameter name="MuxType">
         <Value>1</Value>

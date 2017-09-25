@@ -48,7 +48,7 @@ extern volatile uint8 t1_100us_flag;
 extern volatile uint8 t1_time_share, t1_new_value;
 	
 extern volatile uint8 data_ready_usb;
-extern volatile uint8 adc_delsig_flag;
+extern volatile uint8 adc_delsig_flag, adc_delsig_lastCh;
 	
 extern uint16 led_period;
 	

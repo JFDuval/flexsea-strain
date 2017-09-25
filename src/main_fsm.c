@@ -122,7 +122,7 @@ void main_fsm_case_2(void)
 void main_fsm_case_3(void)
 {
 	//ToDo do this when new data, not randomly
-	strain_filter();
+	//strain_filter();
 	compressAndSplit6ch(strain1.compressedBytes, strain1.ch[0].strain_filtered, 
 						strain1.ch[1].strain_filtered, strain1.ch[2].strain_filtered,
 						strain1.ch[3].strain_filtered, strain1.ch[4].strain_filtered,
@@ -196,6 +196,14 @@ void main_fsm_10kHz(void)
 		parseMasterCommands(&new_cmd_led);
 	
 	#endif	//USE_COMM
+	
+	//ADC filtering:
+	if(adc_delsig_flag)
+	{
+		strain_filter_ch(adc_delsig_lastCh);
+		strain_filter_all();
+		adc_delsig_flag = 0;
+	}
 	
 	//RGB LED:
 	rgbLedRefresh();

@@ -44,6 +44,7 @@
 //****************************************************************************
 
 volatile uint16 adc_delsig_dma_array[STRAIN_BUF_LEN];
+volatile uint8_t strainMemIndex[STRAIN_CHANNELS] = {0,0,0,0,0,0};
 
 //****************************************************************************
 // Private Function Prototype(s)
@@ -173,6 +174,46 @@ void strain_filter(void)
 		//Store in structure:
 		strain1.ch[i].strain_filtered = avg;
 		//strain_filtered = avg;
+	}
+}
+
+//Averages the last values received
+uint16_t strain_filter_ch(uint8_t ch)
+{
+	uint8 cnt = 0;
+	uint32 sum = 0;
+	uint16 avg = 0;
+	
+	//Shift buffer and sum all but last term
+	for(cnt = 0; cnt < STRAIN_BUF_LEN; cnt++)
+	{
+		sum += strain1.ch[ch].strain_raw[cnt];
+	}
+		
+	//Average
+	avg = (uint16)(sum >> STRAIN_SHIFT);
+	
+	//Store in structure:
+	strainMemIndex[ch]++;
+	strainMemIndex[ch] %= 4;
+	strain1.ch[ch].strain_mem[strainMemIndex[ch]] = avg;
+	
+	return avg;
+}
+
+void strain_filter_all(void)
+{
+	uint8_t i = 0;
+	uint32_t sum = 0;
+	
+	//Average for each channel:
+	for(i = 0; i < STRAIN_CHANNELS; i++)
+	{
+		sum = strain1.ch[i].strain_mem[0] + \
+				strain1.ch[i].strain_mem[1] + \
+				strain1.ch[i].strain_mem[2] + \
+				strain1.ch[i].strain_mem[3];
+		strain1.ch[i].strain_filtered = (uint16_t)(sum >> 2);
 	}
 }
 

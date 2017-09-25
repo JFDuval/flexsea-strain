@@ -77,6 +77,9 @@ void isr_delsig_Interrupt_InterruptCallback()
 		strain1.ch[ch].strain_raw[i] = adc_delsig_dma_array[i];
 	}
 
+	//Save what channel was used:
+	adc_delsig_lastCh = ch;
+	
 	//Next channel:
 	ch++;
 	ch %= STRAIN_CHANNELS;
@@ -86,5 +89,5 @@ void isr_delsig_Interrupt_InterruptCallback()
 	
 	adc_delsig_flag = 1;	
 	
-	ADC_DelSig_1_StartConvert();		
+	ADC_DelSig_1_StartConvert();
 }

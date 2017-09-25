@@ -49,7 +49,7 @@ volatile uint8 t1_100us_flag = 0;
 volatile uint8 t1_time_share = 0, t1_new_value = 0;
 
 //ADC:
-volatile uint8 adc_delsig_flag = 0;
+volatile uint8 adc_delsig_flag = 0, adc_delsig_lastCh = 0;
 
 //USB:
 volatile uint8 data_ready_usb = 0;

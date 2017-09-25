@@ -46,6 +46,8 @@ void init_strain(void);
 void strain_config(uint8 ch, uint8 offs);
 uint16 strain_read(uint8 ch);
 void strain_filter(void);
+uint16_t strain_filter_ch(uint8_t ch);
+void strain_filter_all(void);
 void strain_to_ezi2c(void);
 //void strain_test_blocking(void);
 //uint16 strain_filter_dma(void);
