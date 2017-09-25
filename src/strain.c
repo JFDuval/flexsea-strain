@@ -307,64 +307,15 @@ void strain_to_ezi2c(void)
 	ezI2Cbuf[MEM_R_CH6_L] = (uint8)((strain1.ch[5].strain_filtered) & 0xFF);
 }
 
-/*
-//With DMA transfers we get a full buffer (6 bytes) per interrupt
-//Note: we take 6 samples and ignore the first 2. This is a workaround, as the first 2 values are often contaminated.
-uint16 strain_filter_dma(void)
+//Call this when you are ready to send a packet:
+void prepStrainDataForComm(void)
 {
-	uint32 sum = 0;
-	uint8 cnt = 0;
-	uint16 avg = 0;
-	
-	//Sum all the terms
-	for(cnt = 2; cnt < STRAIN_BUF_LEN; cnt++)
-	{
-		sum += adc_delsig_dma_array[cnt];
-	}
-	
-	//Average
-	avg = (uint16)(sum >> STRAIN_SHIFT);
-	
-	//Store in structure:
-	strain.filtered_strain = avg;
-	adc_strain_filtered = avg;
-	
-	return avg;	
+	compressAndSplit6ch(strain1.compressedBytes, strain1.ch[0].strain_filtered, 
+						strain1.ch[1].strain_filtered, strain1.ch[2].strain_filtered,
+						strain1.ch[3].strain_filtered, strain1.ch[4].strain_filtered,
+						strain1.ch[5].strain_filtered);
+	compressedStrainToEzi2c();
 }
-*/
-
-/*
-//Copy of the test code used in main.c to test the hardware:
-void strain_test_blocking(void)
-{
-	//Strain Amplifier test:
-	
-	uint8 i2c_test_wbuf[9];
-	uint8 vr1 = 0;
-	uint8 ledg_state = 0;
-	
-	i2c_test_wbuf[0] = STRAIN_OFFSET;
-	i2c_test_wbuf[1] = 127;	//Offset of ~ V/2
-	I2C_1_MasterWriteBuf(I2C_POT_ADDR, (uint8 *) i2c_test_wbuf, 2, I2C_1_MODE_COMPLETE_XFER);	
-	CyDelay(10);
-	i2c_test_wbuf[0] = STRAIN_GAIN;
-	i2c_test_wbuf[1] = 10;	//Relatively small gain
-	I2C_1_MasterWriteBuf(I2C_POT_ADDR, (uint8 *) i2c_test_wbuf, 2, I2C_1_MODE_COMPLETE_XFER);	
-	
-	i2c_test_wbuf[0] = STRAIN_OFFSET;
-	while(1)
-	{
-		vr1++;		
-		i2c_test_wbuf[1] = vr1;	//Enable this line to test the offset
-		I2C_1_MasterWriteBuf(I2C_POT_ADDR, (uint8 *) i2c_test_wbuf, 2, I2C_1_MODE_COMPLETE_XFER);	
-		
-		ledg_state ^= 1;
-		LED_G_Write(ledg_state);
-		
-		CyDelayUs(1000);
-	}
-}
-*/
 
 //****************************************************************************
 // Private Function(s)

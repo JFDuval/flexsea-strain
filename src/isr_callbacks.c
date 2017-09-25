@@ -96,11 +96,7 @@ void isr_delsig_Interrupt_InterruptCallback()
 void EZI2C_0_ISR_EntryCallback()
 {
 	//Compress latest data:
-	compressAndSplit6ch(strain1.compressedBytes, strain1.ch[0].strain_filtered, 
-						strain1.ch[1].strain_filtered, strain1.ch[2].strain_filtered,
-						strain1.ch[3].strain_filtered, strain1.ch[4].strain_filtered,
-						strain1.ch[5].strain_filtered);
-	compressedStrainToEzi2c();
+	prepStrainDataForComm();
 	
 	//LED:
 	new_cmd_led = 1;

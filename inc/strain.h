@@ -49,11 +49,10 @@ void strain_filter(void);
 uint16_t strain_filter_ch(uint8_t ch);
 void strain_filter_all(void);
 void strain_to_ezi2c(void);
-//void strain_test_blocking(void);
-//uint16 strain_filter_dma(void);
 uint8_t compressAndSplit6ch(uint8_t *buf, uint16_t ch0, uint16_t ch1, uint16_t ch2, \
                             uint16_t ch3, uint16_t ch4, uint16_t ch5);
 void compressedStrainToEzi2c(void);
+void prepStrainDataForComm(void);
 
 //****************************************************************************
 // Definition(s):
