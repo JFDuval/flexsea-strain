@@ -1909,7 +1909,7 @@
         <Value>false</Value>
       </Parameter>
     </Instance>
-    <Instance guid="7da87c79-ecc1-4c24-afe5-6109e299983b" name="Timer_1" component="Timer_v2_80">
+    <Instance guid="7da87c79-ecc1-4c24-afe5-6109e299983b" name="Timer_1" component="Timer_v2_70">
       <Parameter name="CaptureAlternatingFall">
         <Value>false</Value>
       </Parameter>
@@ -2904,7 +2904,7 @@
         <Value>false</Value>
       </Parameter>
     </Instance>
-    <Instance guid="c39ef993-d787-4c0c-8ad6-c0c81f866442" name="USBUART_1" component="USBFS_v3_20">
+    <Instance guid="c39ef993-d787-4c0c-8ad6-c0c81f866442" name="USBUART_1" component="USBFS_v3_10">
       <Parameter name="AudioDescriptors">
         <Value><![CDATA[<?xml version="1.0" encoding="utf-16"?>
 <Tree xmlns:CustomizerVersion="3_20">
@@ -4733,7 +4733,7 @@
       </Parameter>
     </Instance>
   </Instances>
-  <Signals count="40">
+  <Signals count="33">
     <Signal name="Net_6" type="Digital" terminalCount="2">
       <Terminal name="Pin_1.io_0" type="Instance Digital InOut" />
       <Terminal name="EZI2C_0.scl" type="Instance Digital InOut" />
@@ -4762,13 +4762,11 @@
       <Terminal name="isr_delsig.int_signal" type="Instance Digital Input" />
       <Terminal name="DMA_2.nrq" type="Instance Digital Output" />
     </Signal>
-    <Signal name="Net_918" type="Digital" terminalCount="2">
-      <Terminal name="Timer_1.reset" type="Instance Digital Input" />
+    <Signal name="Net_918" type="Digital" terminalCount="1">
       <Terminal name="ZeroTerminal_1.z" type="Instance Digital Output" />
     </Signal>
-    <Signal name="Net_937" type="Digital" terminalCount="2">
+    <Signal name="Net_937" type="Digital" terminalCount="1">
       <Terminal name="isr_t1.int_signal" type="Instance Digital Input" />
-      <Terminal name="Timer_1.interrupt" type="Instance Digital Output" />
     </Signal>
     <Signal name="Net_7672" type="Analog" terminalCount="2">
       <Terminal name="AMux_1.AinTerm0" type="Instance Analog InOut" />
@@ -4794,8 +4792,7 @@
       <Terminal name="AMux_1.AinTerm5" type="Instance Analog InOut" />
       <Terminal name="SG_VOB3.analog_0" type="Instance Analog InOut" />
     </Signal>
-    <Signal name="Net_7690" type="Digital" terminalCount="2">
-      <Terminal name="Timer_1.clock" type="Instance Digital Input" />
+    <Signal name="Net_7690" type="Digital" terminalCount="1">
       <Terminal name="timebase.clock_out" type="Instance Digital Output" />
     </Signal>
     <Signal name="Net_7691" type="Digital" terminalCount="2">
@@ -4845,32 +4842,11 @@
     <Signal name="Net_7722" type="Digital" terminalCount="1">
       <Terminal name="DMA_2.trq" type="Instance Digital Input" />
     </Signal>
-    <Signal name="Net_7727" type="Digital" terminalCount="1">
-      <Terminal name="Timer_1.enable" type="Instance Digital Input" />
-    </Signal>
-    <Signal name="Net_7728" type="Digital" terminalCount="1">
-      <Terminal name="Timer_1.trigger" type="Instance Digital Input" />
-    </Signal>
-    <Signal name="Net_7729" type="Digital" terminalCount="1">
-      <Terminal name="Timer_1.capture" type="Instance Digital Input" />
-    </Signal>
-    <Signal name="Net_7730" type="Digital" terminalCount="1">
-      <Terminal name="Timer_1.capture_out" type="Instance Digital Output" />
-    </Signal>
-    <Signal name="Net_7731" type="Digital" terminalCount="1">
-      <Terminal name="Timer_1.tc" type="Instance Digital Output" />
-    </Signal>
     <Signal name="Net_7787" type="Digital" terminalCount="1">
       <Terminal name="timebase.dig_domain_out" type="Instance Digital Output" />
     </Signal>
     <Signal name="Net_7788" type="Digital" terminalCount="1">
       <Terminal name="i2cclk.dig_domain_out" type="Instance Digital Output" />
-    </Signal>
-    <Signal name="Net_7790" type="Digital" terminalCount="1">
-      <Terminal name="USBUART_1.sof" type="Instance Digital Output" />
-    </Signal>
-    <Signal name="Net_7791" type="Digital" terminalCount="1">
-      <Terminal name="USBUART_1.vbusdet" type="Instance Digital Input" />
     </Signal>
   </Signals>
   <Properties>

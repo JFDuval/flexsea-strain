@@ -74,7 +74,7 @@
         </Annotation>
       </SubShapes>
     </Instance>
-    <Instance shapeName="Shape_2" zorder="13" guid="c39ef993-d787-4c0c-8ad6-c0c81f866442" name="USBUART_1" component="USBFS_v3_20">
+    <Instance shapeName="Shape_2" zorder="13" guid="c39ef993-d787-4c0c-8ad6-c0c81f866442" name="USBUART_1" component="USBFS_v3_10">
       <Location x="612" y="344.1273" />
       <Size width="72" height="57.87265" />
       <SubShapes>
@@ -698,7 +698,7 @@
         </ClosedShape>
       </SubShapes>
     </Instance>
-    <Instance shapeName="Shape_173" zorder="51" guid="7da87c79-ecc1-4c24-afe5-6109e299983b" name="Timer_1" component="Timer_v2_80">
+    <Instance shapeName="Shape_173" zorder="51" guid="7da87c79-ecc1-4c24-afe5-6109e299983b" name="Timer_1" component="Timer_v2_70">
       <Location x="741" y="187.7231" />
       <Size width="90" height="103.3113" />
       <SubShapes>
