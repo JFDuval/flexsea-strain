@@ -46,12 +46,21 @@
 volatile uint16 adc_delsig_dma_array[STRAIN_BUF_LEN];
 volatile uint8_t strainMemIndex[STRAIN_CHANNELS] = {0,0,0,0,0,0};
 
+#ifdef FAKE_DATA
+#warning "Project compiled with FAKE_DATA! 6x sawtooths, no real sensor values."
+volatile uint16_t strainFakeData[STRAIN_CHANNELS] = {0,0,0,0,0,0};
+#endif
+
 //****************************************************************************
 // Private Function Prototype(s)
 //****************************************************************************
 
 static void dma_2_config(void);
 static void init_adc_delsig_dma_array(void);
+
+#ifdef FAKE_DATA
+static void generate_fake_data(void);
+#endif
 
 //****************************************************************************
 // Puvblic Function(s)
@@ -225,7 +234,7 @@ uint8_t compressAndSplit6ch(uint8_t *buf, uint16_t ch0, uint16_t ch1, uint16_t c
     uint8_t tmp0 = 0, tmp1 = 0;
     uint16_t tmp[6] = {0,0,0,0,0,0};
     uint16_t combo[5] = {0,0,0,0,0};
-
+	
     //Compress to 12bits
     tmp[0] = (ch0 >> 4) & 0x0FFF;
     tmp[1] = (ch1 >> 4) & 0x0FFF;
@@ -256,21 +265,6 @@ uint8_t compressAndSplit6ch(uint8_t *buf, uint16_t ch0, uint16_t ch1, uint16_t c
 	SPLIT_16(combo[2], buf, &index);
 	SPLIT_16(combo[3], buf, &index);
 	buf[index++] = (uint8_t)combo[4];
-	/*
-    uint16_to_bytes((uint16_t)combo[0], &tmp0, &tmp1);
-    *(buf) = tmp0;
-    *(buf+1) = tmp1;
-    uint16_to_bytes((uint16_t)combo[1], &tmp0, &tmp1);
-    *(buf+2) = tmp0;
-    *(buf+3) = tmp1;
-    uint16_to_bytes((uint16_t)combo[2], &tmp0, &tmp1);
-    *(buf+4) = tmp0;
-    *(buf+5) = tmp1;
-    uint16_to_bytes((uint16_t)combo[3], &tmp0, &tmp1);
-    *(buf+6) = tmp0;
-    *(buf+7) = tmp1;
-    *(buf+8) = (uint8_t)combo[4];
-	*/
 
     return 0;
 }
@@ -310,16 +304,43 @@ void strain_to_ezi2c(void)
 //Call this when you are ready to send a packet:
 void prepStrainDataForComm(void)
 {
+	#ifdef FAKE_DATA
+	generate_fake_data();
+	compressAndSplit6ch(strain1.compressedBytes, strainFakeData[0],strainFakeData[1], 
+						strainFakeData[2], strainFakeData[3], strainFakeData[4],
+						strainFakeData[5]);
+	
+	#else
 	compressAndSplit6ch(strain1.compressedBytes, strain1.ch[0].strain_filtered, 
 						strain1.ch[1].strain_filtered, strain1.ch[2].strain_filtered,
 						strain1.ch[3].strain_filtered, strain1.ch[4].strain_filtered,
 						strain1.ch[5].strain_filtered);
+	#endif//FAKE_DATA
 	compressedStrainToEzi2c();
 }
 
 //****************************************************************************
 // Private Function(s)
 //****************************************************************************
+
+#ifdef FAKE_DATA
+	
+#define MAX_VAL		16384
+#define CH_OFFSET	1024
+static void generate_fake_data(void)
+{
+	static uint16_t counter = 0;
+	uint8_t i = 0;
+	counter += 4;
+	if(counter >= MAX_VAL){counter = 0;}
+	
+	for(i = 0; i < STRAIN_CHANNELS; i++)
+	{
+		strainFakeData[i] = (counter + (i * CH_OFFSET)) % MAX_VAL;
+	}
+}
+
+#endif	//FAKE_DATA
 
 //DMA for Delta Sigma ADC.
 static void dma_2_config(void)
